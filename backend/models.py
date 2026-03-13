@@ -31,7 +31,7 @@ class Income(Base):
     __tablename__ = "income"
 
     id = Column(Integer, primary_key=True, index=True)
-    source = Column(String, index=True, nullable=False)  # e.g., "Employer Inc", "Client X Website"
+    source = Column(String, index=True, nullable=False)
     date = Column(Date, nullable=False)
     amount = Column(Float, nullable=False)
     currency = Column(String, default="CAD")
