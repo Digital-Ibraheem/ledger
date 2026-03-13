@@ -1,9 +1,13 @@
-from fastapi import FastAPI, UploadFile, File, Depends
+from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+import os
+import shutil
+from datetime import datetime
+import uuid
 
-from . import models
-from .database import engine, SessionLocal
+from . import models, services
+from .database import engine, SessionLocal, DATA_DIR
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
@@ -24,7 +28,33 @@ async def upload_receipt(file: UploadFile = File(...)):
     Upload receipt image/PDF.
     Will call Claude API to extract merchant, date, amount, currency, and suggest a tax category.
     """
-    return {"message": "Endpoint stubbed. Will process receipt and return structured JSON."}
+    if not file.content_type.startswith("image/") and file.content_type != "application/pdf":
+        raise HTTPException(status_code=400, detail="Invalid file type. Must be an image or PDF.")
+
+    receipts_dir = os.path.join(DATA_DIR, "receipts")
+    file_extension = os.path.splitext(file.filename)[1]
+    unique_filename = f"{uuid.uuid4()}{file_extension}"
+    file_path = os.path.join(receipts_dir, unique_filename)
+
+    # Save the file locally
+    try:
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
+
+    # Read the file contents back into memory for the API call
+    # We run it synchronously here assuming small files, but real world might use async queueing
+    with open(file_path, "rb") as f:
+        file_content = f.read()
+
+    # Call Anthropics API
+    try:
+        extracted_data = services.parse_receipt(file_content, file.content_type)
+        extracted_data["receipt_url"] = f"/data/receipts/{unique_filename}"
+        return extracted_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Claude API extraction failed: {str(e)}")
 
 @app.get("/api/expenses")
 def list_expenses(db: Session = Depends(get_db)):
