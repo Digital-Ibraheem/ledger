@@ -1,29 +1,29 @@
 :root {
-    --bg-color: #f7f9fc;
-    --sidebar-bg: #ffffff;
-    --card-bg: #ffffff;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
+    --bg-color: #0f172a;       /* Dark slate background */
+    --sidebar-bg: #1e293b;     /* Slightly lighter for panels */
+    --card-bg: #1e293b;        /* Matching cards to sidebar */
+    --text-primary: #f8fafc;   /* White with a tiny hint of blue */
+    --text-secondary: #94a3b8; /* Muted text */
+    --border-color: #334155;   /* Subtle borders */
     
-    --primary-color: #3b82f6;
-    --primary-hover: #2563eb;
-    --success-color: #10b981;
-    --danger-color: #ef4444;
+    --primary-color: #3b82f6;  /* Keeping vibrant blue */
+    --primary-hover: #60a5fa;  /* Lighter blue on hover for dark mode */
+    --success-color: #34d399;  /* Brighter green for visibility */
+    --danger-color: #f87171;   /* Brighter red for visibility */
     
-    /* Category Tags */
-    --tag-business: #dbeafe;
-    --tag-business-text: #1e40af;
-    --tag-medical: #fce7f3;
-    --tag-medical-text: #bef264; /* will override */
-    --tag-personal: #f3f4f6;
-    --tag-personal-text: #4b5563;
-    --tag-donation: #fef3c7;
-    --tag-donation-text: #d97706;
+    /* Category Tags - Dark Mode Adjusted */
+    --tag-business: rgba(59, 130, 246, 0.15); /* Semi-transparent blue */
+    --tag-business-text: #60a5fa;
+    --tag-medical: rgba(16, 185, 129, 0.15);  /* Semi-transparent green */
+    --tag-medical-text: #34d399;
+    --tag-personal: rgba(148, 163, 184, 0.15); /* Semi-transparent gray */
+    --tag-personal-text: #cbd5e1;
+    --tag-donation: rgba(245, 158, 11, 0.15);  /* Semi-transparent amber */
+    --tag-donation-text: #fbbf24;
 
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5); /* Stronger shadows for dark mode depth */
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
     
     --radius-md: 0.5rem;
     --radius-lg: 1rem;
@@ -214,7 +214,7 @@ body {
 }
 
 .data-table th {
-    background-color: #f8fafc;
+    background-color: #0f172a; /* Darker header background */
     color: var(--text-secondary);
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -227,7 +227,7 @@ body {
 }
 
 .data-table tbody tr:hover {
-    background-color: #f8fafc;
+    background-color: #334155; /* Slightly lighter row on hover */
 }
 
 .text-right { text-align: right; }
@@ -246,7 +246,7 @@ body {
 .tag-business { background: var(--tag-business); color: var(--tag-business-text); }
 .tag-personal { background: var(--tag-personal); color: var(--tag-personal-text); }
 .tag-donation { background: var(--tag-donation); color: var(--tag-donation-text); }
-.tag-medical { background: #dcfce7; color: #166534; }
+.tag-medical { background: var(--tag-medical); color: var(--tag-medical-text); }
 
 .deductible-badge {
     display: inline-flex;
@@ -318,6 +318,8 @@ input[type="text"], input[type="number"], input[type="date"], select, textarea {
     font-family: inherit;
     font-size: 0.875rem;
     outline: none;
+    background-color: var(--bg-color); /* Matches app background */
+    color: var(--text-primary);
     transition: border-color 0.2s;
 }
 
@@ -338,7 +340,8 @@ input:focus, select:focus, textarea:focus {
     width: auto;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    background-color: #f8fafc;
+    background-color: #334155; /* Darker input group matching */
+    color: var(--text-primary);
 }
 
 .checkbox-group {
@@ -376,11 +379,11 @@ input:focus, select:focus, textarea:focus {
 .btn-primary:hover { background-color: var(--primary-hover); }
 
 .btn-secondary {
-    background-color: white;
+    background-color: transparent;
     color: var(--text-primary);
     border: 1px solid var(--border-color);
 }
-.btn-secondary:hover { background-color: #f8fafc; }
+.btn-secondary:hover { background-color: rgba(255, 255, 255, 0.05); }
 
 /* Utilities */
 .mt-2 { margin-top: 0.5rem; }
