@@ -164,17 +164,21 @@ async function handleExpenseSubmit(e) {
     };
 
     try {
-        // Mock backend post request visually working for now until backend is unstubbed
-        /*
-        await fetch(`${API_BASE}/expenses`, {
+        // Hit the actual backend 
+        const response = await fetch(`${API_BASE}/expenses`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(newExpense)
         });
-        */
         
-        // Add to local state
-        expenses.unshift(newExpense);
+        if (!response.ok) {
+            throw new Error('Failed to create expense on backend');
+        }
+        
+        const savedExpense = await response.json();
+        
+        // Add to local state (using the DB returned one so we have the real ID)
+        expenses.unshift(savedExpense);
         
         showToast("Expense saved successfully!");
         resetUploadView();
@@ -246,9 +250,22 @@ function renderExpenses() {
     });
 }
 
-function updateDashboardStats() {
+async function updateDashboardStats() {
     document.getElementById('dash-recent-list').innerHTML = '';
     
+    // Fetch true dashboard stats from backend
+    try {
+        const res = await fetch(`${API_BASE}/dashboard/monthly`);
+        if(res.ok) {
+            const stats = await res.json();
+            document.getElementById('dash-total-income').textContent = `$${stats.total_income.toFixed(2)}`;
+            document.getElementById('dash-total-expenses').textContent = `$${stats.total_expenses.toFixed(2)}`;
+            document.getElementById('dash-deductible').textContent = `$${stats.total_deductible.toFixed(2)}`;
+        }
+    } catch(e) {
+        console.warn("Failed to fetch true dashboard stats, keeping UI fallback");
+    }
+
     if(expenses.length === 0) {
         document.getElementById('dash-recent-empty').style.display = 'block';
         document.getElementById('dash-recent-table').classList.add('hidden');
@@ -257,20 +274,8 @@ function updateDashboardStats() {
     
     document.getElementById('dash-recent-empty').style.display = 'none';
     document.getElementById('dash-recent-table').classList.remove('hidden');
-
-    // Stats calculations (Assuming all CAD for simplicity right now)
-    let totalExp = 0;
-    let totalDed = 0;
     
-    expenses.forEach(exp => {
-        totalExp += exp.amount;
-        if(exp.is_deductible) totalDed += exp.amount;
-    });
-
-    document.getElementById('dash-total-expenses').textContent = `$${totalExp.toFixed(2)}`;
-    document.getElementById('dash-deductible').textContent = `$${totalDed.toFixed(2)}`;
-    
-    // Render top 5 recent
+    // Render top 5 recent from local state
     expenses.slice(0, 5).forEach(exp => {
         document.getElementById('dash-recent-list').innerHTML += createDashboardRow(exp);
     });

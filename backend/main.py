@@ -7,7 +7,7 @@ import shutil
 from datetime import datetime
 import uuid
 
-from . import models, services
+from . import models, services, schemas
 from .database import engine, SessionLocal, DATA_DIR
 
 # Create database tables
@@ -66,19 +66,24 @@ async def upload_receipt(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Claude API extraction failed: {str(e)}")
 
-@app.get("/api/expenses")
+@app.get("/api/expenses", response_model=List[schemas.ExpenseResponse])
 def list_expenses(db: Session = Depends(get_db)):
     """
     Search & filter expenses (by category, date range, deductible status).
+    For now, returns all descending by date.
     """
-    return []
+    return db.query(models.Expense).order_by(models.Expense.date.desc()).all()
 
-@app.post("/api/expenses")
-def create_expense(db: Session = Depends(get_db)):
+@app.post("/api/expenses", response_model=schemas.ExpenseResponse)
+def create_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
     """
     Create a new expense manually or from a confirmed receipt upload.
     """
-    return {"message": "Endpoint stubbed."}
+    db_expense = models.Expense(**expense.model_dump())
+    db.add(db_expense)
+    db.commit()
+    db.refresh(db_expense)
+    return db_expense
 
 @app.put("/api/expenses/{expense_id}")
 def update_expense(expense_id: int, db: Session = Depends(get_db)):
@@ -113,7 +118,21 @@ def get_monthly_dashboard(db: Session = Depends(get_db)):
     Primary currency: CAD, secondary: USD (converted).
     Includes total income from sources.
     """
-    return {"message": "Endpoint stubbed."}
+    from sqlalchemy import func
+    
+    # Calculate expenses
+    total_expenses = float(db.query(func.sum(models.Expense.amount)).scalar() or 0.0)
+    deductible_expenses = float(db.query(func.sum(models.Expense.amount)).filter(models.Expense.is_deductible == True).scalar() or 0.0)
+    
+    # Calculate income
+    total_income = float(db.query(func.sum(models.Income.amount)).scalar() or 0.0)
+    
+    return {
+        "total_income": round(total_income, 2),
+        "total_expenses": round(total_expenses, 2),
+        "total_deductible": round(deductible_expenses, 2),
+        "currency": "CAD"
+    }
 
 @app.get("/api/income")
 def list_income(db: Session = Depends(get_db)):
