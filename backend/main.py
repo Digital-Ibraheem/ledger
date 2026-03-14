@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 import os
@@ -13,6 +14,15 @@ from .database import engine, SessionLocal, DATA_DIR
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Ledger API")
+
+# Setup CORS to allow the local frontend to communicate with the API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # During development, allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency to get DB session
 def get_db():
