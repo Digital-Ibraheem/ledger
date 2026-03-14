@@ -180,21 +180,25 @@
                 </header>
                 
                 <div class="card table-card">
-                    <div class="table-filters">
-                        <select id="filter-category" class="filter-select">
-                            <option value="all">All Categories</option>
-                            <option value="business">Business</option>
-                            <option value="medical">Medical</option>
-                            <option value="personal">Personal</option>
-                            <option value="donation">Donation</option>
-                        </select>
-                        <select id="filter-deductible" class="filter-select">
-                            <option value="all">Any Status</option>
-                            <option value="true">Deductible Only</option>
-                            <option value="false">Non-Deductible</option>
-                        </select>
-                    </div>
-                    <table class="data-table">
+                    <div class="view-header">
+                        <h2>All Expenses</h2>
+                        <div class="filters">
+                            <select id="filter-category">
+                                <option value="all">All Categories</option>
+                                <option value="business">Business</option>
+                                <option value="personal">Personal</option>
+                                <option value="medical">Medical</option>
+                                <option value="donation">Donation</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <select id="filter-deductible">
+                                <option value="all">Any Status</option>
+                                <option value="true">Deductible Only</option>
+                                <option value="false">Non-Deductible</option>
+                            </select>
+                            <button class="btn btn-secondary" id="btn-clear-expenses" style="border-color: var(--danger-color); color: var(--danger-color);">Clear All</button>
+                        </div>
+                    </div>        <table class="data-table">
                         <thead>
                             <tr>
                                 <th>Date</th>

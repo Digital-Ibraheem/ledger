@@ -7,8 +7,8 @@ import shutil
 from datetime import datetime
 import uuid
 
-from . import models, services, schemas
-from .database import engine, SessionLocal, DATA_DIR
+import models, services, schemas
+from database import engine, SessionLocal, DATA_DIR
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
@@ -92,6 +92,15 @@ def update_expense(expense_id: int, db: Session = Depends(get_db)):
 @app.delete("/api/expenses/{expense_id}")
 def delete_expense(expense_id: int, db: Session = Depends(get_db)):
     return {"message": "Endpoint stubbed."}
+
+@app.delete("/api/expenses")
+def delete_all_expenses(db: Session = Depends(get_db)):
+    """
+    Clear all expenses from the database.
+    """
+    db.query(models.Expense).delete()
+    db.commit()
+    return {"message": "All expenses cleared."}
 
 @app.get("/api/bills")
 def list_bills(db: Session = Depends(get_db)):

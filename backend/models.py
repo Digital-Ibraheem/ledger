@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, Date, Enum as SQLEnum, Text, ForeignKey
 import enum
-from .database import Base
+from database import Base
 
 class CategoryEnum(str, enum.Enum):
     business = "business"

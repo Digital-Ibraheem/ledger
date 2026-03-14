@@ -209,7 +209,7 @@ body {
 }
 
 .data-table th, .data-table td {
-    padding: 1rem 1.5rem;
+    padding: 1.25rem 2rem; /* Increased padding for more space */
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -331,6 +331,18 @@ input:focus, select:focus, textarea:focus {
 .input-with-currency {
     display: flex;
 }
+
+/* Ensure filters sit inline nicely */
+.filters {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap; /* allows wrapping on very small screens */
+}
+.filters select {
+    width: auto;
+    min-width: 150px;
+}
 .input-with-currency input {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -414,17 +426,16 @@ input:focus, select:focus, textarea:focus {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    background: var(--text-primary);
-    color: white;
-    padding: 1rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white; /* Always white on the bright blue primary pop */
+    padding: 1rem 2rem;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
-    font-size: 0.875rem;
     font-weight: 500;
-    z-index: 50;
+    z-index: 1000;
     opacity: 0;
     transform: translateY(1rem);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .toast.show {

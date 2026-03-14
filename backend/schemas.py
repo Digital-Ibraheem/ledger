@@ -3,7 +3,7 @@ from datetime import date
 from typing import Optional
 
 # Base for Enums from models
-from .models import CategoryEnum, IncomeEnum
+from models import CategoryEnum, IncomeEnum
 
 # --- Expenses ---
 class ExpenseCreate(BaseModel):
